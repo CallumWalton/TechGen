@@ -141,7 +141,7 @@ export const PdfPreview: React.FC<PdfPreviewProps> = ({
                     </div>
                 ) : pdfUrl ? (
                     <iframe
-                        src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                        src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1`}
                         className="pdf-preview-iframe"
                         title="PDF Preview"
                     />
