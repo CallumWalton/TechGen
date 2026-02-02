@@ -257,14 +257,42 @@
 @media (max-width: 1024px) {
   .app-editor.with-preview {
     margin-right: 0;
+    max-width: 100%;
   }
 
   .pdf-preview-panel {
-    display: none;
+    /* Mobile: Full screen overlay */
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 100;
+    /* High z-index to cover everything */
+    display: flex;
+    /* Changed from none to flex for overlay when visible */
+    transform: translateX(100%);
+    /* Slide out by default if we want animation, but relying on React rendering for now */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  /* When the component renders (isVisible=true), we want it visible. 
+     Since the React component returns null when !isVisible, 
+     we just need to ensure it's styled correctly when it *is* rendered.
+  */
+  .pdf-preview-panel {
+    transform: translateX(0);
   }
 
   .pdf-preview-toggle {
-    display: block;
+    display: none;
+    /* We'll use the ControlSidebar for toggling on mobile too */
+  }
+
+  /* Adjust controls for mobile overlay */
+  .pdf-preview-controls {
+    top: 1rem;
+    right: 1rem;
+    flex-direction: row;
   }
 }
 
@@ -301,6 +329,26 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .control-sidebar {
+    top: auto;
+    bottom: 2rem;
+    right: 1.5rem;
+    transform: none;
+    /* Reset vertical centering */
+    flex-direction: column-reverse;
+    /* Stack upwards from bottom */
+    border-radius: 9999px;
+    /* Pill shape */
+    padding: 0.5rem;
+  }
+
+  /* Ensure it sits above the preview if needed, but usually we want it below the preview overlay 
+     so the preview covers it. The preview has z-index 100, this has 50. Correct.
+  */
 }
 
 .control-sidebar-btn {
@@ -310,11 +358,23 @@
   transition: all 0.2s ease;
 }
 
+@media (max-width: 1024px) {
+  .control-sidebar-btn {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    /* Circle buttons on mobile */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
 .control-sidebar-btn:hover {
   transform: scale(1.05);
 }
 
-/* When preview is visible, position sidebar to the left of it */
-.app-editor.with-preview~.control-sidebar {
-  right: calc(clamp(320px, 40vw, 600px) + 1rem);
+/* When preview is visible on desktop, position sidebar to the left of it */
+@media (min-width: 1025px) {
+  .app-editor.with-preview~.control-sidebar {
+    right: calc(clamp(320px, 40vw, 600px) + 1rem);
+  }
 }

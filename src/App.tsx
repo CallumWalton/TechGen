@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TechSpecProvider, useTechSpec } from "@/context/TechSpecContext";
 import { ControlSidebar } from "@/components/ControlSidebar";
 import { AboutYouSection } from "@/components/sections/AboutYouSection";
@@ -19,7 +19,29 @@ import "./index.css";
 function AppContent() {
   const { data } = useTechSpec();
   const hasLighting = data.hasBringingLighting;
-  const [showPreview, setShowPreview] = useState(true);
+
+  // Default to hidden on mobile (< 1024px), visible on desktop
+  const [showPreview, setShowPreview] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024;
+    }
+    return true;
+  });
+
+  // Listen for window resize to hide preview if switching to mobile view
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024 && showPreview) {
+        // Optional: Auto-hide when resizing down? 
+        // User asked for "start with pdf hidden", strictly speaking initial state covers that.
+        // But if they are testing resize, this helps.
+        // setShowPreview(false); // Uncomment if aggressive auto-hide is desired
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [showPreview]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -35,34 +57,34 @@ function AppContent() {
               </div>
             </div>
             <Tabs defaultValue="about" className="space-y-6">
-              <TabsList className="flex flex-wrap w-full lg:w-auto gap-1 h-auto p-1">
-                <TabsTrigger value="about" className="text-xs sm:text-sm">
+              <TabsList className="w-full justify-start overflow-x-auto gap-1 h-auto p-1 flex-nowrap lg:flex-wrap no-scrollbar">
+                <TabsTrigger value="about" className="text-xs sm:text-sm whitespace-nowrap">
                   1. About
                 </TabsTrigger>
-                <TabsTrigger value="contacts" className="text-xs sm:text-sm">
+                <TabsTrigger value="contacts" className="text-xs sm:text-sm whitespace-nowrap">
                   2. Contacts
                 </TabsTrigger>
-                <TabsTrigger value="bring" className="text-xs sm:text-sm">
+                <TabsTrigger value="bring" className="text-xs sm:text-sm whitespace-nowrap">
                   3. Equipment
                 </TabsTrigger>
-                <TabsTrigger value="venue" className="text-xs sm:text-sm">
+                <TabsTrigger value="venue" className="text-xs sm:text-sm whitespace-nowrap">
                   4. Backline
                 </TabsTrigger>
-                <TabsTrigger value="stage" className="text-xs sm:text-sm">
+                <TabsTrigger value="stage" className="text-xs sm:text-sm whitespace-nowrap">
                   5. Stage
                 </TabsTrigger>
-                <TabsTrigger value="sendlist" className="text-xs sm:text-sm">
+                <TabsTrigger value="sendlist" className="text-xs sm:text-sm whitespace-nowrap">
                   6. Audio
                 </TabsTrigger>
                 {hasLighting && (
-                  <TabsTrigger value="lighting" className="text-xs sm:text-sm">
+                  <TabsTrigger value="lighting" className="text-xs sm:text-sm whitespace-nowrap">
                     7. Lighting
                   </TabsTrigger>
                 )}
-                <TabsTrigger value="plot" className="text-xs sm:text-sm">
+                <TabsTrigger value="plot" className="text-xs sm:text-sm whitespace-nowrap">
                   {hasLighting ? '8' : '7'}. Plot
                 </TabsTrigger>
-                <TabsTrigger value="pdf-settings" className="text-xs sm:text-sm">
+                <TabsTrigger value="pdf-settings" className="text-xs sm:text-sm whitespace-nowrap">
                   {hasLighting ? '9' : '8'}. Styling
                 </TabsTrigger>
               </TabsList>
