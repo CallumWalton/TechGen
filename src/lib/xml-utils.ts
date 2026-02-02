@@ -153,6 +153,16 @@ const pdfSettingsToXml = (settings: PDFExportSettings): string => {
     <primaryColor>${settings.primaryColor}</primaryColor>
     <accentColor>${settings.accentColor}</accentColor>
     <showLogoOnAllPages>${settings.showLogoOnAllPages}</showLogoOnAllPages>
+    <includeCoverPage>${settings.includeCoverPage}</includeCoverPage>
+    <includeAboutSection>${settings.includeAboutSection}</includeAboutSection>
+    <includeContactsSection>${settings.includeContactsSection}</includeContactsSection>
+    <includeStageReqsSection>${settings.includeStageReqsSection}</includeStageReqsSection>
+    <includeEquipmentSection>${settings.includeEquipmentSection}</includeEquipmentSection>
+    <includeVenueNeedsSection>${settings.includeVenueNeedsSection}</includeVenueNeedsSection>
+    <includeSendListSection>${settings.includeSendListSection}</includeSendListSection>
+    <includeLightingSection>${settings.includeLightingSection}</includeLightingSection>
+    <includeStagePlotSection>${settings.includeStagePlotSection}</includeStagePlotSection>
+    <includeFooterNotes>${settings.includeFooterNotes}</includeFooterNotes>
   </pdfSettings>`;
 };
 
@@ -367,11 +377,27 @@ const parseContacts = (element: Element | null): ContactInfo[] => {
 const parsePdfSettings = (element: Element | null): PDFExportSettings => {
     if (!element) return DEFAULT_PDF_SETTINGS;
 
+    // Helper to get boolean with default value fallback
+    const getBool = (tag: string, defaultVal: boolean): boolean => {
+        const val = getTextContent(element.querySelector(tag));
+        return val === "" ? defaultVal : val === "true";
+    };
+
     return {
         fontFamily: (getTextContent(element.querySelector("fontFamily")) as PDFExportSettings["fontFamily"]) || DEFAULT_PDF_SETTINGS.fontFamily,
         primaryColor: getTextContent(element.querySelector("primaryColor")) || DEFAULT_PDF_SETTINGS.primaryColor,
         accentColor: getTextContent(element.querySelector("accentColor")) || DEFAULT_PDF_SETTINGS.accentColor,
-        showLogoOnAllPages: getTextContent(element.querySelector("showLogoOnAllPages")) === "true",
+        showLogoOnAllPages: getBool("showLogoOnAllPages", DEFAULT_PDF_SETTINGS.showLogoOnAllPages),
+        includeCoverPage: getBool("includeCoverPage", DEFAULT_PDF_SETTINGS.includeCoverPage),
+        includeAboutSection: getBool("includeAboutSection", DEFAULT_PDF_SETTINGS.includeAboutSection),
+        includeContactsSection: getBool("includeContactsSection", DEFAULT_PDF_SETTINGS.includeContactsSection),
+        includeStageReqsSection: getBool("includeStageReqsSection", DEFAULT_PDF_SETTINGS.includeStageReqsSection),
+        includeEquipmentSection: getBool("includeEquipmentSection", DEFAULT_PDF_SETTINGS.includeEquipmentSection),
+        includeVenueNeedsSection: getBool("includeVenueNeedsSection", DEFAULT_PDF_SETTINGS.includeVenueNeedsSection),
+        includeSendListSection: getBool("includeSendListSection", DEFAULT_PDF_SETTINGS.includeSendListSection),
+        includeLightingSection: getBool("includeLightingSection", DEFAULT_PDF_SETTINGS.includeLightingSection),
+        includeStagePlotSection: getBool("includeStagePlotSection", DEFAULT_PDF_SETTINGS.includeStagePlotSection),
+        includeFooterNotes: getBool("includeFooterNotes", DEFAULT_PDF_SETTINGS.includeFooterNotes),
     };
 };
 
