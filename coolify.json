@@ -1,0 +1,9 @@
+{
+    "build": {
+        "command": "npm install && npm run build",
+        "publish": "dist"
+    },
+    "start": {
+        "command": "npx serve dist -s -l $PORT"
+    }
+}
